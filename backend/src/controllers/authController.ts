@@ -1,9 +1,7 @@
 import type { Request, Response } from 'express';
 import { hashPassword, comparePassword, generateToken } from '../utils/auth.js';
 import type { AuthRequest } from '../middleware/authMiddleware.js';
-import { PrismaClient } from '../../generated/prisma/client.js';
-
-const prisma = new PrismaClient();
+import prisma from '../db.js';
 
 export const register = async (req: Request, res: Response): Promise<void> => {
 

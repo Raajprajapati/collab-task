@@ -1,8 +1,6 @@
 import type { Request, Response, NextFunction } from 'express';
 import { verifyToken } from '../utils/auth.js';
-import { PrismaClient } from '../../generated/prisma/client.js';
-
-const prisma = new PrismaClient();
+import prisma from '../db.js';
 
 export interface AuthRequest extends Request {
     user?: {
