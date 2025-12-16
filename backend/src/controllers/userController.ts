@@ -1,6 +1,6 @@
 import type { Request, Response } from 'express';
-import { UserService } from '../services/userService.js';
-import type { AuthRequest } from '../middleware/authMiddleware.js';
+import { UserService } from '../services/userService.ts';
+import type { AuthRequest } from '../middleware/authMiddleware.ts';
 
 export class UserController {
     private userService: UserService;

@@ -1,7 +1,7 @@
 import type { Request, Response } from 'express';
-import { hashPassword, comparePassword, generateToken } from '../utils/auth.js';
-import type { AuthRequest } from '../middleware/authMiddleware.js';
-import prisma from '../db.js';
+import { hashPassword, comparePassword, generateToken } from '../utils/auth.ts';
+import type { AuthRequest } from '../middleware/authMiddleware.ts';
+import prisma from '../db.ts';
 
 export const register = async (req: Request, res: Response): Promise<void> => {
 
