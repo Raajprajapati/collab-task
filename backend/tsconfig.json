@@ -2,15 +2,18 @@
   "compilerOptions": {
     "sourceMap": true,
     "outDir": "dist",
+    "target": "ES2020",
     "strict": true,
     "lib": [
       "esnext"
     ],
     "esModuleInterop": true,
-    "module": "ESNext",
-    "moduleResolution": "node",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
     "resolveJsonModule": true,
-    "noEmit": true,
-    "allowImportingTsExtensions": true
+    // "noEmit": false,
+    // "allowImportingTsExtensions": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true
   }
 }

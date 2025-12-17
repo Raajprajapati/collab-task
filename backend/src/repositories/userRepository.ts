@@ -1,4 +1,4 @@
-import prisma from '../db.ts';
+import prisma from '../db';
 import type { User, Prisma } from '../../generated/prisma/client.js';
 
 export class UserRepository {

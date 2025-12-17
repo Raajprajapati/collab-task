@@ -1,6 +1,6 @@
 import type { Request, Response, NextFunction } from 'express';
-import { verifyToken } from '../utils/auth.ts';
-import prisma from '../db.ts';
+import { verifyToken } from '../utils/auth';
+import prisma from '../db';
 
 export interface AuthRequest extends Request {
     user?: {

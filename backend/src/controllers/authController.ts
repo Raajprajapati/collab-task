@@ -1,17 +1,13 @@
 import type { Request, Response } from 'express';
-import { hashPassword, comparePassword, generateToken } from '../utils/auth.ts';
-import type { AuthRequest } from '../middleware/authMiddleware.ts';
-import prisma from '../db.ts';
+import { hashPassword, comparePassword, generateToken } from '../utils/auth';
+import type { AuthRequest } from '../middleware/authMiddleware';
+import prisma from '../db';
 
 export const register = async (req: Request, res: Response): Promise<void> => {
 
     try {
+        console.log("Req body from regiss", req.body);
         const { email, password, name } = req.body;
-
-        if (!email || !password) {
-            res.status(400).json({ error: 'Email and password are required' });
-            return;
-        }
 
         const existingUser = await prisma.user.findUnique({ where: { email } });
         if (existingUser) {
@@ -38,11 +34,6 @@ export const register = async (req: Request, res: Response): Promise<void> => {
 export const login = async (req: Request, res: Response): Promise<void> => {
     try {
         const { email, password } = req.body;
-
-        if (!email || !password) {
-            res.status(400).json({ error: 'Email and password are required' });
-            return;
-        }
 
         const user = await prisma.user.findUnique({ where: { email } });
         if (!user) {

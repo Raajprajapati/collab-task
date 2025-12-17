@@ -1,5 +1,5 @@
-import { UserRepository } from '../repositories/userRepository.ts';
-import { hashPassword } from '../utils/auth.ts';
+import { UserRepository } from '../repositories/userRepository';
+import { hashPassword } from '../utils/auth';
 import type { User, Prisma } from '../../generated/prisma/client';
 export class UserService {
     private userRepository: UserRepository;
