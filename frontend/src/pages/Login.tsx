@@ -41,16 +41,16 @@ const Login = () => {
     };
 
 
-    // useEffect(() => {
-    //     if (user) navigate('/');
-    // }, [user]);
+    useEffect(() => {
+        if (user) navigate('/');
+    }, [user]);
 
     return (
         <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-12 sm:px-6 lg:px-8">
-            <div className="w-full max-w-md space-y-8">
+            <div className="w-full max-w-md border rounded-md border-gray-200 shadow-md p-6 space-y-8">
                 <div className='mb-6'>
-                    <h1 className="text-3xl font-bold text-center">Welcome Back</h1>
-                    <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900">
+                    <h1 className="text-2xl font-bold text-center text-blue-600">Welcome Back</h1>
+                    <h2 className="mt-6 text-center text-2xl font-bold tracking-tight text-gray-900">
                         Sign in to your account
                     </h2>
                     <p className="mt-2 text-center text-sm text-gray-600">
@@ -61,7 +61,7 @@ const Login = () => {
                     </p>
                 </div>
                 <form className="mt-8 p-6 space-y-6" onSubmit={handleSubmit(onSubmit)}>
-                    <div className="space-y-4 bg-white p-6 flex flex-col gap-6">
+                    <div className="space-y-4 flex flex-col">
                         <Input
                             label="Email address"
                             type="email"
@@ -88,7 +88,7 @@ const Login = () => {
                         </div>
                     )}
 
-                    <div className="mt-3 pt-6">
+                    <div className="mt-3">
                         <Button
                             type="submit"
                             className="w-full"
