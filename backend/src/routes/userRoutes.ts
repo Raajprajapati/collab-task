@@ -6,6 +6,8 @@ const router = Router();
 const userController = new UserController();
 
 router.post('/register', userController.register);
+
+// Protected user routes
 router.get('/profile', authenticate, userController.getProfile);
 router.put('/profile', authenticate, userController.updateProfile);
 

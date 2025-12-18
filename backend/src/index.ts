@@ -5,6 +5,7 @@ import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import authRoutes from './routes/authRoutes';
 import userRoutes from './routes/userRoutes';
+import taskRoutes from './routes/taskRoutes';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -27,6 +28,7 @@ app.use(cookieParser());
 
 app.use('/auth', authRoutes);
 app.use('/users', userRoutes);
+app.use('/tasks', taskRoutes);
 
 app.get('/', (req, res) => {
     res.send('API is running');
