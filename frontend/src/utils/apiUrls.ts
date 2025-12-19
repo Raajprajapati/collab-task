@@ -18,6 +18,9 @@ export const API_URLS = {
     },
     getAllUsers(): string {
         return `${API_BASE_URL}/users/all`;
-    }
+    },
+    notifications: `${API_BASE_URL}/notifications`,
+    oldNotifications: `${API_BASE_URL}/notifications/old`,
+    markNotificationAsRead: `${API_BASE_URL}/notifications/read`,
 }
 
