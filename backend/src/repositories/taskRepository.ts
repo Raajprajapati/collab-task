@@ -8,7 +8,7 @@ export class TaskRepository {
         });
     }
 
-    async findByUserId(userId: string): Promise<Task[]> {
+    async findAllByUserId(userId: string): Promise<Task[]> {
         return await prisma.task.findMany({
             where: {
                 OR: [
@@ -23,6 +23,49 @@ export class TaskRepository {
             orderBy: { createdAt: 'desc' }
         });
     }
+
+    async findByCreatorId(userId: string): Promise<Task[]> {
+        return await prisma.task.findMany({
+            where: {
+                creatorId: userId
+            },
+            include: {
+                creator: { select: { id: true, name: true, email: true } },
+                assignedTo: { select: { id: true, name: true, email: true } }
+            },
+            orderBy: { createdAt: 'desc' }
+        });
+    }
+
+    async findByAssignedToId(userId: string): Promise<Task[]> {
+        return await prisma.task.findMany({
+            where: {
+                assignedToId: userId
+            },
+            include: {
+                creator: { select: { id: true, name: true, email: true } },
+                assignedTo: { select: { id: true, name: true, email: true } }
+            },
+            orderBy: { createdAt: 'desc' }
+        });
+    }
+
+    async findOverdueTasks(userId: string): Promise<Task[]> {
+        return await prisma.task.findMany({
+            where: {
+                assignedToId: userId,
+                dueDate: {
+                    lt: new Date()
+                }
+            },
+            include: {
+                creator: { select: { id: true, name: true, email: true } },
+                assignedTo: { select: { id: true, name: true, email: true } }
+            },
+            orderBy: { createdAt: 'desc' }
+        });
+    }
+
 
     async findById(id: string): Promise<Task | null> {
         return await prisma.task.findUnique({

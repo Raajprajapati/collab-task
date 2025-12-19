@@ -30,4 +30,8 @@ export class UserService {
         }
         return await this.userRepository.update(id, data);
     }
+
+    async getAllUsers(): Promise<User[]> {
+        return await this.userRepository.findMany();
+    }
 }

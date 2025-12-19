@@ -10,8 +10,17 @@ export class TaskService {
         this.taskRepository = new TaskRepository();
     }
 
-    async getTasks(userId: string): Promise<Task[]> {
-        return await this.taskRepository.findByUserId(userId);
+    async getTasks(userId: string, params?: { filter: 'createdBy' | 'assignedTo' | 'overdue' | undefined }): Promise<Task[]> {
+        switch (params?.filter) {
+            case 'createdBy':
+                return await this.taskRepository.findByCreatorId(userId);
+            case 'assignedTo':
+                return await this.taskRepository.findByAssignedToId(userId);
+            case 'overdue':
+                return await this.taskRepository.findOverdueTasks(userId);
+            default:
+                return await this.taskRepository.findAllByUserId(userId);
+        }
     }
 
     async createTask(userId: string, data: CreateTaskDto): Promise<Task> {
@@ -47,5 +56,9 @@ export class TaskService {
 
     async deleteTask(id: string): Promise<void> {
         await this.taskRepository.delete(id);
+    }
+
+    async getAssignedTasks(userId: string): Promise<Task[]> {
+        return await this.taskRepository.findByAssignedToId(userId);
     }
 }

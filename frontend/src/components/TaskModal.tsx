@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -6,7 +6,7 @@ import { X } from 'lucide-react';
 import { Button } from './ui/Button';
 import { Input } from './ui/Input';
 import { Priority, Status } from '../types';
-import type { Task } from '../types';
+import type { Task, User } from '../types';
 import api from '../services/api';
 import { API_URLS } from '../utils/apiUrls';
 
@@ -16,6 +16,7 @@ const taskSchema = z.object({
     dueDate: z.string().optional(),
     priority: z.enum(Priority),
     status: z.enum(Status),
+    assignedToId: z.string().optional(),
 });
 
 type TaskFormData = z.infer<typeof taskSchema>;
@@ -28,6 +29,7 @@ interface TaskModalProps {
 }
 
 const TaskModal: React.FC<TaskModalProps> = ({ isOpen, onClose, onTaskSaved, task }) => {
+    const [users, setUsers] = useState<User[]>([]);
     const {
         register,
         handleSubmit,
@@ -42,6 +44,21 @@ const TaskModal: React.FC<TaskModalProps> = ({ isOpen, onClose, onTaskSaved, tas
     });
 
     useEffect(() => {
+        const fetchUsers = async () => {
+            try {
+                const response = await api.get(API_URLS.getAllUsers());
+                setUsers(response.data);
+            } catch (error) {
+                console.error('Failed to fetch users', error);
+            }
+        };
+
+        if (isOpen) {
+            fetchUsers();
+        }
+    }, [isOpen]);
+
+    useEffect(() => {
         if (task) {
             reset({
                 title: task.title,
@@ -49,6 +66,7 @@ const TaskModal: React.FC<TaskModalProps> = ({ isOpen, onClose, onTaskSaved, tas
                 dueDate: task.dueDate ? new Date(task.dueDate).toISOString().split('T')[0] : '',
                 priority: task.priority,
                 status: task.status,
+                assignedToId: task.assignedToId || '',
             });
         } else {
             reset({
@@ -57,16 +75,26 @@ const TaskModal: React.FC<TaskModalProps> = ({ isOpen, onClose, onTaskSaved, tas
                 dueDate: '',
                 priority: Priority.LOW,
                 status: Status.TODO,
+                assignedToId: '',
             });
         }
     }, [task, reset, isOpen]);
 
     const onSubmit = async (data: TaskFormData) => {
         try {
+            // If assignedToId is empty string, make it undefined/null so backend handles it correctly
+            // or ensure backend handles empty string as null.
+            // Based on DTO, it expects optional string.
+            // Let's clean the data before sending.
+            const payload = {
+                ...data,
+                assignedToId: data.assignedToId === '' ? undefined : data.assignedToId,
+            };
+
             if (task) {
-                await api.put(API_URLS.updateTask(task.id), data);
+                await api.put(API_URLS.updateTask(task.id), payload);
             } else {
-                await api.post(API_URLS.createTask, data);
+                await api.post(API_URLS.createTask, payload);
             }
             onTaskSaved();
             onClose();
@@ -117,6 +145,23 @@ const TaskModal: React.FC<TaskModalProps> = ({ isOpen, onClose, onTaskSaved, tas
                         {...register('dueDate')}
                     />
 
+                    <div>
+                        <label className="mb-1 block text-sm font-medium text-gray-700">
+                            Assigned To
+                        </label>
+                        <select
+                            className="block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 sm:text-sm"
+                            {...register('assignedToId')}
+                        >
+                            <option value="">Unassigned</option>
+                            {users.map((user) => (
+                                <option key={user.id} value={user.id}>
+                                    {user.name} ({user.email})
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+
                     <div className="grid grid-cols-2 gap-4">
                         <div>
                             <label className="mb-1 block text-sm font-medium text-gray-700">
@@ -166,3 +211,4 @@ const TaskModal: React.FC<TaskModalProps> = ({ isOpen, onClose, onTaskSaved, tas
 };
 
 export default TaskModal;
+

@@ -7,9 +7,11 @@ import api from '../services/api';
 import type { Task } from '../types';
 import { API_URLS } from '../utils/apiUrls';
 import TaskCard from '../components/TaskCard';
+import { useSocket } from '../context/SocketContext';
 
 const Dashboard = () => {
     const { user, logout } = useAuth();
+    const { socket } = useSocket();
     const [tasks, setTasks] = useState<Task[]>([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedTask, setSelectedTask] = useState<Task | null>(null);
@@ -39,7 +41,7 @@ const Dashboard = () => {
     const handleDeleteTask = async (id: string) => {
         if (confirm('Are you sure you want to delete this task?')) {
             try {
-                await api.delete(`/tasks/${id}`);
+                await api.delete(API_URLS.deleteTask(id));
                 fetchTasks();
             } catch (error) {
                 console.error('Failed to delete task', error);
@@ -54,6 +56,40 @@ const Dashboard = () => {
     useEffect(() => {
         fetchTasks();
     }, []);
+
+    useEffect(() => {
+        if (!socket) return;
+
+        socket.on('taskUpdated', (updatedTask: Task) => {
+            setTasks((prevTasks) => {
+                const taskExists = prevTasks.find(t => t.id === updatedTask.id);
+                if (taskExists) {
+                    return prevTasks.map(t => t.id === updatedTask.id ? updatedTask : t);
+                } else {
+                    return [...prevTasks, updatedTask];
+                }
+            });
+        });
+
+        socket.on('taskDeleted', (deletedTaskId: string) => {
+            setTasks((prevTasks) => prevTasks.filter(t => t.id !== deletedTaskId));
+        });
+
+        if (user?.id) {
+            socket.on(`notification_${user.id}`, (notification: any) => {
+                console.log('New notification:', notification);
+                alert(`New notification: ${notification.message || JSON.stringify(notification)}`);
+            });
+        }
+
+        return () => {
+            socket.off('taskUpdated');
+            socket.off('taskDeleted');
+            if (user?.id) {
+                socket.off(`notification_${user.id}`);
+            }
+        };
+    }, [socket, user]);
     return (
         <div className="min-h-screen bg-gray-50">
             <nav className="bg-white shadow-sm">

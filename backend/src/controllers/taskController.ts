@@ -1,6 +1,7 @@
 import { Response } from 'express';
 import { TaskService } from '../services/taskService';
 import { AuthRequest } from '../middleware/authMiddleware';
+import { emitTaskUpdate } from '../services/socketService';
 
 export class TaskController {
     private taskService: TaskService;
@@ -16,7 +17,8 @@ export class TaskController {
                 res.status(401).json({ error: 'Unauthorized' });
                 return;
             }
-            const tasks = await this.taskService.getTasks(userId);
+            const filter = req.query.filter as 'createdBy' | 'assignedTo' | 'overdue' | undefined;
+            const tasks = await this.taskService.getTasks(userId, { filter });
             res.json(tasks);
         } catch (error) {
             console.error(error);
@@ -44,6 +46,7 @@ export class TaskController {
         try {
             const { id } = req.params;
             const task = await this.taskService.updateTask(id, req.body);
+            emitTaskUpdate(task);
             res.json(task);
         } catch (error) {
             console.error(error);
@@ -55,7 +58,9 @@ export class TaskController {
         try {
             const { id } = req.params;
             await this.taskService.deleteTask(id);
+            emitTaskUpdate(id);
             res.json({ message: 'Task deleted successfully' });
+
         } catch (error) {
             console.error(error);
             res.status(500).json({ error: 'Failed to delete task' });

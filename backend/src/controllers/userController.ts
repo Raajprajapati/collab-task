@@ -67,4 +67,14 @@ export class UserController {
             res.status(500).json({ error: 'Internal server error' });
         }
     }
+
+    getAllUsers = async (req: AuthRequest, res: Response): Promise<void> => {
+        try {
+            const users = await this.userService.getAllUsers();
+            res.json(users);
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ error: 'Internal server error' });
+        }
+    }
 }
