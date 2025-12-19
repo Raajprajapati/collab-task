@@ -1,5 +1,6 @@
 import prisma from '../db';
 import type { Task, Prisma } from '../../generated/prisma/client';
+import { FilterTasks } from '../types';
 
 export class TaskRepository {
     async create(data: Prisma.TaskCreateInput): Promise<Task> {
@@ -8,22 +9,47 @@ export class TaskRepository {
         });
     }
 
-    async findAllByUserId(userId: string): Promise<Task[]> {
-        return await prisma.task.findMany({
+    async findAllByUserId(userId: string, filter?: FilterTasks): Promise<Task[]> {
+        const andConditions: any[] = [];
+
+        // Dynamic filters
+        if (filter?.filters && filter.filters.length > 0) {
+            for (const f of filter.filters) {
+                if (f.value !== undefined && f.value !== null && f.value !== "") {
+                    andConditions.push({
+                        [f.key]: f.value
+                    });
+                }
+            }
+        }
+
+        // Search filter
+        if (filter?.search) {
+            andConditions.push({
+                title: {
+                    contains: filter.search,
+                    mode: 'insensitive'
+                }
+            });
+        }
+
+        return prisma.task.findMany({
             where: {
                 OR: [
                     { creatorId: userId },
                     { assignedToId: userId }
-                ]
+                ],
+                ...(andConditions.length > 0 && { AND: andConditions })
             },
             include: {
                 creator: { select: { id: true, name: true, email: true } },
                 assignedTo: { select: { id: true, name: true, email: true } }
             },
-            orderBy: { createdAt: 'desc' }
+            orderBy: {
+                [filter?.orderBy ?? 'createdAt']: filter?.order ?? 'desc'
+            }
         });
     }
-
     async findByCreatorId(userId: string): Promise<Task[]> {
         return await prisma.task.findMany({
             where: {

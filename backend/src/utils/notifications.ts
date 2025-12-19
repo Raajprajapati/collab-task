@@ -2,12 +2,12 @@ import { Task, User } from "../../generated/prisma";
 
 const createNotification = (user: User, updatedData: Partial<Task>, oldData?: Partial<Task> | null): null | { userId: string, message: string, read: boolean, createdAt: Date } => {
 
-    if (user.id === updatedData.assignedToId) {
+    if (user.id === updatedData.assignedToId || !updatedData.assignedToId) {
         return null;
     }
 
     let notification = {
-        userId: user.id,
+        userId: updatedData.assignedToId,
         message: `${user.name} updated task ${oldData?.title}`,
         read: false,
         createdAt: new Date(),

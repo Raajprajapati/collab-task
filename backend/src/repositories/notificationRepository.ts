@@ -5,9 +5,13 @@ export class NotificationRepository {
 
     constructor() { }
 
-    createNotification = async (data: Omit<Notification, 'id'>): Promise<Notification> => {
+    createNotification = async (notificationData: Omit<Notification, 'id'>): Promise<Notification> => {
+        const { userId, ...rest } = notificationData;
         return await prisma.notification.create({
-            data
+            data: {
+                ...rest,
+                user: { connect: { id: userId } }
+            }
         });
     }
 
