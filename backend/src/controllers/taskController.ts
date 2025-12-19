@@ -2,6 +2,7 @@ import { Response } from 'express';
 import { TaskService } from '../services/taskService';
 import { AuthRequest } from '../middleware/authMiddleware';
 import { emitTaskUpdate } from '../services/socketService';
+import { FilterTasks } from '../types';
 
 export class TaskController {
     private taskService: TaskService;
@@ -17,8 +18,17 @@ export class TaskController {
                 res.status(401).json({ error: 'Unauthorized' });
                 return;
             }
-            const filter = req.query.filter as 'createdBy' | 'assignedTo' | 'overdue' | undefined;
-            const tasks = await this.taskService.getTasks(userId, { filter });
+
+            const { order, orderBy, search, filters } = req.query as FilterTasks;
+
+            const filterParams = {
+                order: order,
+                orderBy: orderBy,
+                search: search,
+                filters: filters
+            };
+
+            const tasks = await this.taskService.getTasks(userId, filterParams);
             res.json(tasks);
         } catch (error) {
             console.error(error);
@@ -45,7 +55,9 @@ export class TaskController {
     updateTask = async (req: AuthRequest, res: Response): Promise<void> => {
         try {
             const { id } = req.params;
-            const task = await this.taskService.updateTask(id, req.body);
+            const userId = req.user?.id;
+
+            const task = await this.taskService.updateTask(id, userId!, req.body);
             emitTaskUpdate(task);
             res.json(task);
         } catch (error) {

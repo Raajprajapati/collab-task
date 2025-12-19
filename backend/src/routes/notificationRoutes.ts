@@ -9,6 +9,7 @@ const notificationController = new NotificationController();
 router.use(authenticate);
 
 router.get('/', notificationController.getNotifications);
-router.put('/:id/read', notificationController.markRead);
+router.get('/old', notificationController.getOldNotifications);
+router.put('/read', notificationController.markRead);
 
 export default router;

@@ -5,9 +5,9 @@ export class NotificationRepository {
 
     constructor() { }
 
-    createNotification = async (data: Prisma.NotificationCreateInput): Promise<Notification> => {
+    createNotification = async (data: Omit<Notification, 'id'>): Promise<Notification> => {
         return await prisma.notification.create({
-            data,
+            data
         });
     }
 
@@ -18,12 +18,20 @@ export class NotificationRepository {
         });
     }
 
+    getOldNotifications = async (userId: string): Promise<Notification[]> => {
+        return await prisma.notification.findMany({
+            where: { userId, read: true },
+            orderBy: { createdAt: 'desc' }
+        });
+    }
+
     getNotificationById = async (id: string): Promise<Notification | null> => {
         return await prisma.notification.findUnique({ where: { id } });
     }
-    markRead = async (id: string): Promise<void> => {
-        await prisma.notification.update({
-            where: { id },
+
+    markRead = async (userId: string): Promise<void> => {
+        await prisma.notification.updateMany({
+            where: { userId: userId, read: false },
             data: { read: true }
         });
     }

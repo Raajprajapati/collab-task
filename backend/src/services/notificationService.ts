@@ -12,16 +12,20 @@ export class NotificationService {
         return await this.notificationRepository.getNotifications(userId);
     }
 
-    getNotificationById = async (id: string): Promise<Notification | null> => {
-        return await this.notificationRepository.getNotificationById(id);
+    getOldNotifications = async (userId: string): Promise<Notification[]> => {
+        return await this.notificationRepository.getOldNotifications(userId);
     }
 
-    markRead = async (id: string): Promise<void> => {
-        await this.notificationRepository.markRead(id);
+    markRead = async (userId: string): Promise<void> => {
+        await this.notificationRepository.markRead(userId);
     }
 
     deleteNotification = async (id: string): Promise<void> => {
         await this.notificationRepository.deleteNotification(id);
+    }
+
+    createNotification = async (notification: Omit<Notification, 'id'>): Promise<Notification> => {
+        return await this.notificationRepository.createNotification(notification);
     }
 
 }
