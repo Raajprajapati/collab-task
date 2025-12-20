@@ -19,13 +19,14 @@ export class TaskController {
                 return;
             }
 
-            const { order, orderBy, search, filters } = req.query as FilterTasks;
+            const { order, orderBy, search, filterBy, filterValue } = req.query as FilterTasks;
 
             const filterParams = {
                 order: order,
                 orderBy: orderBy,
                 search: search,
-                filters: filters
+                filterBy: filterBy,
+                filterValue: filterValue
             };
 
             const tasks = await this.taskService.getTasks(userId, filterParams);

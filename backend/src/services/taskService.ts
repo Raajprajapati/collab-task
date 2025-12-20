@@ -38,7 +38,9 @@ export class TaskService {
         const user = await this.userRepository.findById(userId);
 
         const notification = createNotification(user!, {
-            assignedToId: data.assignedToId
+            assignedToId: data.assignedToId,
+            title: data.title,
+
         });
 
         if (notification) {

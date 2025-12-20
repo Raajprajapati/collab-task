@@ -63,7 +63,7 @@ const TaskModal: React.FC<TaskModalProps> = ({ isOpen, onClose, onTaskSaved, tas
             reset({
                 title: task.title,
                 description: task.description,
-                dueDate: task.dueDate ? new Date(task.dueDate).toISOString().split('T')[0] : '',
+                dueDate: task.dueDate ? new Date(task.dueDate).toISOString().slice(0, 16) : '',
                 priority: task.priority,
                 status: task.status,
                 assignedToId: task.assignedToId || '',
@@ -140,7 +140,7 @@ const TaskModal: React.FC<TaskModalProps> = ({ isOpen, onClose, onTaskSaved, tas
 
                     <Input
                         label="Due Date"
-                        type="date"
+                        type="datetime-local"
                         error={errors.dueDate?.message}
                         {...register('dueDate')}
                     />

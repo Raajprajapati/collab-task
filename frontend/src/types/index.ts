@@ -42,3 +42,19 @@ export interface AuthState {
     isAuthenticated: boolean;
     isLoading: boolean;
 }
+
+export type FilterTasks = {
+    order: "asc" | "desc",
+    orderBy: "createdAt" | "dueDate",
+    filterBy?: "status" | "priority" | "assignedToId" | "creatorId" | "overdue",
+    filterValue?: string,
+    search?: string
+}
+
+export interface Notification {
+    id: string;
+    userId: string;
+    message: string;
+    read: boolean;
+    createdAt: string;
+}

@@ -7,9 +7,10 @@ const formatTime = (date: Date | string | undefined | null) => {
     const day = formattedDate.getDate();
     const hour = formattedDate.getHours();
     const minute = formattedDate.getMinutes();
-    const second = formattedDate.getSeconds();
+    const ampm = hour >= 12 ? 'PM' : 'AM';
+    const hours = hour % 12;
 
-    return `${year}-${month}-${day} ${hour}:${minute}:${second}`;
+    return `${year}-${month}-${day} ${hours.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')} ${ampm}`;
 };
 
 export default formatTime;

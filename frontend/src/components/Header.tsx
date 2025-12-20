@@ -9,7 +9,7 @@ const Header = () => {
     const { user, logout } = useAuth();
     const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
     const { socket, isConnected } = useSocket();
-    const [newNotification, setNewNotification] = useState(true);
+    const [newNotification, setNewNotification] = useState(false);
 
     useEffect(() => {
         if (!isConnected || !socket || !user) return;

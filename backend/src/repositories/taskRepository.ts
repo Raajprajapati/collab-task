@@ -12,15 +12,12 @@ export class TaskRepository {
     async findAllByUserId(userId: string, filter?: FilterTasks): Promise<Task[]> {
         const andConditions: any[] = [];
 
+
         // Dynamic filters
-        if (filter?.filters && filter.filters.length > 0) {
-            for (const f of filter.filters) {
-                if (f.value !== undefined && f.value !== null && f.value !== "") {
-                    andConditions.push({
-                        [f.key]: f.value
-                    });
-                }
-            }
+        if (filter?.filterBy && filter?.filterValue) {
+            andConditions.push({
+                [filter.filterBy]: filter.filterValue
+            });
         }
 
         // Search filter
